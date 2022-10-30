@@ -9,7 +9,6 @@ const modalRoot = document.querySelector('#modal-root');
 export const Modal = ({ closeModal, children }) => {
   useEffect(() => {
     const coseByEsc = evt => {
-      console.log(evt.code);
       if (evt.code === 'Escape') {
         closeModal();
       }
@@ -44,4 +43,5 @@ export const Modal = ({ closeModal, children }) => {
 
 Modal.propTypes = {
   closeModal: PropTypes.func,
+  children: PropTypes.node,
 };
