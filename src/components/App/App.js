@@ -19,10 +19,6 @@ export const App = () => {
 
   useEffect(() => {
     if (name !== '' && pageNumber === 1 && totalImgInfo) {
-      setTotalImgInfo(true);
-      setResponse([]);
-      setStatus('pending');
-      setLoadMoreBtn(false);
       const foo = async () => {
         try {
           const data = await fetch(name, pageNumber);
