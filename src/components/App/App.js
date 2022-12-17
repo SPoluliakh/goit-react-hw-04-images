@@ -18,28 +18,38 @@ export const App = () => {
   const [totalImgInfo, setTotalImgInfo] = useState(false);
 
   useEffect(() => {
-    if (name !== '' && pageNumber === 1 && totalImgInfo) {
+    if (name !== '') {
       const foo = async () => {
         try {
-          const data = await fetch(name, pageNumber);
-          if (totalImgInfo) {
-            toast.success(`Yahoooo, we finded ${data.totalHits} photos`);
+          if (pageNumber === 1 && totalImgInfo) {
+            const data = await fetch(name, pageNumber);
+            if (totalImgInfo) {
+              toast.success(`Yahoooo, we finded ${data.totalHits} photos`);
+              setResponse(prevState => [...prevState, ...data.hits]);
+              setStatus('resolved');
+              setLoadMoreBtn(true);
+              setAutoScroll(true);
+              setTotalImgInfo(false);
+            }
+            if (pageNumber === Math.ceil(data.totalHits / 12)) {
+              toast.info('You have seen all photos ');
+              return setLoadMoreBtn(false);
+            }
+          }
+          if (pageNumber > 1) {
+            const data = await fetch(name, pageNumber);
             setResponse(prevState => [...prevState, ...data.hits]);
             setStatus('resolved');
-            setLoadMoreBtn(true);
-            setAutoScroll(true);
-            setTotalImgInfo(false);
-          }
 
-          if (pageNumber === Math.ceil(data.totalHits / 12)) {
-            toast.info('You have seen all photos ');
-            return setLoadMoreBtn(false);
+            if (pageNumber === Math.ceil(data.totalHits / 12)) {
+              toast.info('You have seen all photos ');
+              return setLoadMoreBtn(false);
+            }
           }
         } catch (error) {
           setStatus('rejected');
           setLoadMoreBtn(false);
           setAutoScroll(false);
-
           toast.warn(
             ' Sorry, there are no images matching your search query. Please try again.'
           );
@@ -49,33 +59,6 @@ export const App = () => {
       foo();
     }
   }, [pageNumber, totalImgInfo, name]);
-
-  useEffect(() => {
-    if (pageNumber > 1) {
-      const foo = async () => {
-        try {
-          const data = await fetch(name, pageNumber);
-          setResponse(prevState => [...prevState, ...data.hits]);
-          setStatus('resolved');
-
-          if (pageNumber === Math.ceil(data.totalHits / 12)) {
-            toast.info('You have seen all photos ');
-            return setLoadMoreBtn(false);
-          }
-        } catch (error) {
-          setStatus('rejected');
-          setLoadMoreBtn(false);
-          setAutoScroll(false);
-
-          toast.warn(
-            ' Sorry, there are no images matching your search query. Please try again.'
-          );
-          console.log(error);
-        }
-      };
-      foo();
-    }
-  }, [pageNumber, name]);
 
   useEffect(() => {
     if (autoScroll) {
